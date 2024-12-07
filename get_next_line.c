@@ -6,7 +6,7 @@
 /*   By: hlichten <hlichten@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 19:30:15 by hlichten          #+#    #+#             */
-/*   Updated: 2024/12/07 22:14:14 by hlichten         ###   ########.fr       */
+/*   Updated: 2024/12/07 22:32:20 by hlichten         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,12 +81,16 @@ char	*get_next_line(int fd)
 	}
 	if (rd > 0 || ft_strchr(buffer, '\n') == 1)
 	{
+		next_line = ft_strjoin(next_line, beg_of_line(buffer));
+		ret = next_line; // ????? pas possible a gerer maintenant
 		// recup le debu jusqu a \n dans next line a la suite de donc de concatener les 2 ++ mettre dans le ret le reste
+		next_line = ft_calloc(1, sizeof(char));
+		next_line = find_next_line(buffer);
 		// vider next line ++ mettre dans la static next line ce qui se passe apres le \n sans l inclure
 	} 
 	//free ??
 	
-	return (buffer);
+	return (ret);
 }
 
 int    main (int ac, char **av)
