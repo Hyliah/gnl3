@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hlichten <marvin@42lausanne.ch>            +#+  +:+       +#+        */
+/*   By: hlichten <hlichten@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 19:30:15 by hlichten          #+#    #+#             */
-/*   Updated: 2024/12/08 18:03:19 by hlichten         ###   ########.fr       */
+/*   Updated: 2024/12/08 18:42:22 by hlichten         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ char	*ft_free(char **str)
 	str = (NULL);
 	return (NULL);
 }
-char *beg_of_line(char *buffer)
+
+char *start_of_line(char *buffer)
 {
 	int	i;
 	char *tmp;
@@ -35,9 +36,10 @@ char *beg_of_line(char *buffer)
 	tmp[i] = '\n';
 	i++;
 	tmp[i] = '\0';
-//	ft_free(&buffer);
+	//ft_free(&buffer);
 	return(tmp);
 }
+
 char	*find_next_line(char *buffer)
 {
 	int		i;
@@ -57,7 +59,7 @@ char	*find_next_line(char *buffer)
 	while (buffer[i])
 		tmp[j++] = buffer[i++];
 	tmp[j] = '\0';
-//	ft_free(&buffer);
+	ft_free(&buffer);
 	return (tmp);
 }
 
@@ -76,19 +78,16 @@ char	*get_next_line(int fd)
 	if (!next_line || !buffer)
 		return (ft_free(&buffer), ft_free(&next_line));
 	rd = 1;
-	while (rd > 0 && buffer && ft_strchr(buffer, '\n') == 0) // si il n y a pas de \n dans le buffer, on va tout copier dans le next line --> gerer le malloc dans une nouvelle fonction
+	while (rd > 0 && ft_strchr(buffer, '\n') == 0) // si il n y a pas de \n dans le buffer, on va tout copier dans le next line --> gerer le malloc dans une nouvelle fonction
 	{
-		printf("yuyuyu\n\n\n");
 		rd = read(fd, buffer, BUFFER_SIZE); // mise en place de l entree dans le buffer
 		if (rd < 0)
 			return (ft_free(&buffer), ft_free(&next_line));
 		buffer[rd] = '\0'; // finir la string avec le '\0'
-		printf("hello2\n");
 		next_line = ft_strjoin(next_line, buffer); // on met dans next_line la suite
-		printf("b");
-	//	ft_free(&buffer);
+		ft_free(&buffer);
 	}
-	buffer = beg_of_line(next_line);
+	buffer = start_of_line(next_line);
 	next_line = find_next_line(next_line);
 	return (buffer);
 }
