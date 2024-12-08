@@ -3,22 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hlichten <hlichten@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hlichten <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 19:30:15 by hlichten          #+#    #+#             */
-/*   Updated: 2024/12/07 22:32:20 by hlichten         ###   ########.fr       */
+/*   Updated: 2024/12/08 18:03:19 by hlichten         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	**ft_free(char *str)
+char	*ft_free(char **str)
 {
 	free(str);
 	str = (NULL);
 	return (NULL);
 }
-static char *beg_of_line(char *buffer)
+char *beg_of_line(char *buffer)
 {
 	int	i;
 	char *tmp;
@@ -28,14 +28,17 @@ static char *beg_of_line(char *buffer)
 		return(ft_free(&buffer));
 	tmp = calloc(ft_strlen_gnl(buffer) + 2, sizeof(char));
 	while(buffer[i] || buffer[i] != '\n')
-		tmp[i++] = buffer[i++];
+	{
+		tmp[i] = buffer[i];
+		i++;
+	}
 	tmp[i] = '\n';
 	i++;
 	tmp[i] = '\0';
-	ft_free(&buffer);
+//	ft_free(&buffer);
 	return(tmp);
 }
-static char	*find_next_line(char *buffer)
+char	*find_next_line(char *buffer)
 {
 	int		i;
 	int		j;
@@ -54,7 +57,7 @@ static char	*find_next_line(char *buffer)
 	while (buffer[i])
 		tmp[j++] = buffer[i++];
 	tmp[j] = '\0';
-	ft_free(&buffer);
+//	ft_free(&buffer);
 	return (tmp);
 }
 
@@ -70,27 +73,24 @@ char	*get_next_line(int fd)
 	buffer = calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!next_line)
 		next_line = ft_calloc(1, sizeof(char));
-	if (!ret)
-		ret = ft_calloc(1, sizeof(char));
+	if (!next_line || !buffer)
+		return (ft_free(&buffer), ft_free(&next_line));
 	rd = 1;
-	while (rd > 0 || ft_strchr(buffer, '\n') == 0) // si il n y a pas de \n dans le buffer, on va tout copier dans le next line --> gerer le malloc dans une nouvelle fonction
+	while (rd > 0 && buffer && ft_strchr(buffer, '\n') == 0) // si il n y a pas de \n dans le buffer, on va tout copier dans le next line --> gerer le malloc dans une nouvelle fonction
 	{
-		rd = read(fd, buffer, BUFFER_SIZE);
-		buffer[rd] = '\0';
-		next_line = ft_strjoin(next_line, buffer);
+		printf("yuyuyu\n\n\n");
+		rd = read(fd, buffer, BUFFER_SIZE); // mise en place de l entree dans le buffer
+		if (rd < 0)
+			return (ft_free(&buffer), ft_free(&next_line));
+		buffer[rd] = '\0'; // finir la string avec le '\0'
+		printf("hello2\n");
+		next_line = ft_strjoin(next_line, buffer); // on met dans next_line la suite
+		printf("b");
+	//	ft_free(&buffer);
 	}
-	if (rd > 0 || ft_strchr(buffer, '\n') == 1)
-	{
-		next_line = ft_strjoin(next_line, beg_of_line(buffer));
-		ret = next_line; // ????? pas possible a gerer maintenant
-		// recup le debu jusqu a \n dans next line a la suite de donc de concatener les 2 ++ mettre dans le ret le reste
-		next_line = ft_calloc(1, sizeof(char));
-		next_line = find_next_line(buffer);
-		// vider next line ++ mettre dans la static next line ce qui se passe apres le \n sans l inclure
-	} 
-	//free ??
-	
-	return (ret);
+	buffer = beg_of_line(next_line);
+	next_line = find_next_line(next_line);
+	return (buffer);
 }
 
 int    main (int ac, char **av)
@@ -106,3 +106,12 @@ int    main (int ac, char **av)
     }
 	return 0;
 }
+
+	
+	// next_line = ft_strjoin(next_line, beg_of_line(buffer)); 
+	// ret = next_line; // ????? pas possible a gerer maintenant
+	// // recup le debu jusqu a \n dans next line a la suite de donc de concatener les 2 ++ mettre dans le ret le reste
+	// next_line = ft_calloc(1, sizeof(char));
+	// next_line = find_next_line(buffer);
+	// // vider next line ++ mettre dans la static next line ce qui se passe apres le \n sans l inclure 
+	// //free ??

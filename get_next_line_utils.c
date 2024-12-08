@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hlichten <hlichten@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hlichten <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 19:30:12 by hlichten          #+#    #+#             */
-/*   Updated: 2024/12/07 22:14:16 by hlichten         ###   ########.fr       */
+/*   Updated: 2024/12/08 18:03:18 by hlichten         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	ft_strlen(char *str)
 {
-		int	i;
+	int	i;
 
 	if (!str)
 		return (0);
@@ -24,7 +24,7 @@ int	ft_strlen(char *str)
 	return (i);
 }
 
-int	ft_strlen_gnl(const char *str)
+int	ft_strlen_gnl(char *str)
 {
 	int	i;
 
@@ -36,16 +36,19 @@ int	ft_strlen_gnl(const char *str)
 	return (i);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
 	char	*str;
 	int		i;
 	int		j;
+	int		len;
 
 	i = 0;
 	j = 0;
-	str = (char *)malloc(sizeof (char) * (ft_strlen((char *)(s1))
-				+ ft_strlen((char *)(s2)) + 1));
+	if (!s1 || !s2)
+		return (NULL);
+	len = ft_strlen(s1) + ft_strlen(s2);
+	str = (char *)malloc(sizeof (char) * len);
 	if (!str)
 		return (NULL);
 	while (s1[i])
@@ -54,12 +57,8 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		i++;
 	}
 	while (s2[j])
-	{
-		str[i] = s2[j];
-		i++;
-		j++;
-	}
-	str[i] = '\0';
+		str[i++] = s2[j++];
+	str[len] = '\0';
 	return (str);
 }
 
@@ -90,5 +89,25 @@ void	*ft_calloc(size_t count, size_t size)
 		return (NULL);
 	ft_bzero(str, i);
 	return (str);
+
 }
 
+void	ft_bzero(void *s, size_t n)
+{
+	ft_memset(s, 0, n);
+}
+
+void	*ft_memset(void *b, int c, size_t len)
+{
+	size_t			i;
+	unsigned char	*s;
+
+	i = 0;
+	s = (unsigned char *)b;
+	while (i < len)
+	{
+		s[i] = c;
+		i++;
+	}
+	return (s);
+}
