@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hlichten <hlichten@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hlichten <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 19:30:15 by hlichten          #+#    #+#             */
-/*   Updated: 2024/12/08 18:42:22 by hlichten         ###   ########.fr       */
+/*   Updated: 2024/12/13 20:27:54 by hlichten         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ char *start_of_line(char *buffer)
 	char *tmp;
 
 	i = 0;
-	if (!buffer[i])
-		return(ft_free(&buffer));
-	tmp = calloc(ft_strlen_gnl(buffer) + 2, sizeof(char));
+	if (!buffer[i] || !buffer);
+		return(NULL);
+	tmp = calloc(ft_strlen_gnl(buffer, 1) + 2, sizeof(char));
 	while(buffer[i] || buffer[i] != '\n')
 	{
 		tmp[i] = buffer[i];
@@ -36,11 +36,11 @@ char *start_of_line(char *buffer)
 	tmp[i] = '\n';
 	i++;
 	tmp[i] = '\0';
-	//ft_free(&buffer);
+	ft_free(&buffer);
 	return(tmp);
 }
 
-char	*find_next_line(char *buffer)
+char	*end_of_line(char *buffer)
 {
 	int		i;
 	int		j;
@@ -52,7 +52,7 @@ char	*find_next_line(char *buffer)
 		i++;
 	if (!buffer[i])
 		return (ft_free(&buffer));
-	tmp = ft_calloc((ft_strlen(buffer) - i + 1), sizeof(char));
+	tmp = ft_calloc((ft_strlen_gnl(buffer, 0) - i + 1), sizeof(char));
 	if (!tmp)
 		return (NULL);
 	i++;
@@ -88,7 +88,7 @@ char	*get_next_line(int fd)
 		ft_free(&buffer);
 	}
 	buffer = start_of_line(next_line);
-	next_line = find_next_line(next_line);
+	next_line = end_of_line(next_line);
 	return (buffer);
 }
 
